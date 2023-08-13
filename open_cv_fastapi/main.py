@@ -1,19 +1,18 @@
 from fastapi import FastAPI, Request, Response, BackgroundTasks
 from fastapi.responses import StreamingResponse
-import cv2
-import numpy as np
+from camera import VideoCamera
 
 app = FastAPI()
 
-class VideoCamera(object):
-    def __init__(self):
-        self.video = cv2.VideoCapture(0)
-    def __del__(self):
-        self.video.release()
-    def get_frame(self):
-        ret, frame = self.video.read()
-        ret, jpeg = cv2.imencode('.jpg', frame)
-        return jpeg.tobytes()
+# class SimpleVideoCamera(object):
+#     def __init__(self):
+#         self.video = cv2.VideoCapture(0)
+#     def __del__(self):
+#         self.video.release()
+#     def get_frame(self):
+#         ret, frame = self.video.read()
+#         ret, jpeg = cv2.imencode('.jpg', frame)
+#         return jpeg.tobytes()
 
 def gen(camera):
     while True:
