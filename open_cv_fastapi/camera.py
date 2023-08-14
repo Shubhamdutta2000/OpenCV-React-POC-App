@@ -6,14 +6,16 @@ import time
 # eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 
-# def gen_frames():  
+# def gen_frames():
 #     cap.release()
 
 class VideoCamera(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+        self.face_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        self.eye_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + 'haarcascade_eye.xml')
 
     def __del__(self):
         self.video.release()
@@ -34,6 +36,8 @@ class VideoCamera(object):
             # If no faces detected, display the original frame
             if len(faces) == 0:
                 # cv2.imshow('Video', frame)
+                ret, jpeg = cv2.imencode('.jpg', frame)
+                return jpeg.tobytes()
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
                 continue
@@ -50,8 +54,10 @@ class VideoCamera(object):
 
                 # If no eyes or only one eye detected, display the original face ROI
                 if len(eyes) == 0 or len(eyes) == 1:
+                    ret, jpeg = cv2.imencode('.jpg', face_roi)
+                    return jpeg.tobytes()
                     # cv2.imshow('Video', face_roi)
-                    prev_time=0
+                    prev_time = 0
                     current_time = time.time()
                     elapsed_time = current_time - prev_time
                     prev_time = current_time
@@ -82,7 +88,9 @@ class VideoCamera(object):
 
                 # Display the combined eye ROIs
                 # cv2.imshow('Video', eyes_roi)
-                prev_time=0
+                ret, jpeg = cv2.imencode('.jpg', eyes_roi)
+                return jpeg.tobytes()
+                prev_time = 0
                 current_time = time.time()
                 elapsed_time = current_time - prev_time
                 prev_time = current_time
@@ -94,11 +102,8 @@ class VideoCamera(object):
                 print("Extracted_Eyes_bandwidth:", bandwidth)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-                    
-            ret, jpeg = cv2.imencode('.jpg', frame)
-            return jpeg.tobytes()
 
-
+            time.sleep(1000)
         # ret, frame = self.video.read()
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
