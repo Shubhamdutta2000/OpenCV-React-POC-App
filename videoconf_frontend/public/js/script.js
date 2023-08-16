@@ -202,12 +202,18 @@ const videoImage = document.getElementById("videoImage");
               const errorData = await response.json();
           }
           videoImage.setAttribute("src","https://www.popsci.com/uploads/2020/01/07/WMD5M52LJFBEBIHNEEABHVB6LA.jpg");
+          videoImage.onload = () => {
+            videoImage.style.maxWidth = "10vw"; // Reset to the default width
+        };
         }
         else{
         //   const alternativeResponse = await fetch('/video_feed', {
         //     method: 'GET'
         // });
         videoImage.setAttribute("src","http://localhost:8000/video_feed");
+        videoImage.onload = () => {
+          videoImage.style.maxWidth = ""; // Reset to the default width
+      };
         }
       }
       catch (error) {
