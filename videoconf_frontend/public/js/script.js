@@ -186,40 +186,41 @@ const muteUnmute = () => {
 
 // play/stop function
 const playStop = async () => {
-const releaseButton=document.getElementById("stop_vid")
-const videoImage = document.getElementById("videoImage");
+  const releaseButton = document.getElementById("stop_vid");
+  const videoImage = document.getElementById("videoImage");
 
-// releaseButton.addEventListener("click", async () => {
+  // releaseButton.addEventListener("click", async () => {
   try {
-      if (videoImage.getAttribute("src") === "http://localhost:8000/video_feed") {
-          const response = await fetch('http://localhost:8000/stop', {
-              method: 'DELETE'
-          });
+    if (videoImage.getAttribute("src") === "http://localhost:8000/video_feed") {
+      const response = await fetch("http://localhost:8000/stop", {
+        method: "DELETE",
+      });
 
-          if (response.ok) {
-              const data = await response.json();
-          } else {
-              const errorData = await response.json();
-          }
-          videoImage.setAttribute("src","https://www.popsci.com/uploads/2020/01/07/WMD5M52LJFBEBIHNEEABHVB6LA.jpg");
-          videoImage.onload = () => {
-            videoImage.style.maxWidth = "10vw"; // Reset to the default width
-        };
-        }
-        else{
-        //   const alternativeResponse = await fetch('/video_feed', {
-        //     method: 'GET'
-        // });
-        videoImage.setAttribute("src","http://localhost:8000/video_feed");
-        videoImage.onload = () => {
-          videoImage.style.maxWidth = ""; // Reset to the default width
-      };
-        }
+      if (response.ok) {
+        const data = await response.json();
+      } else {
+        const errorData = await response.json();
       }
-      catch (error) {
-        console.error('An error occurred:', error);
-        alert('An error occurred while processing.');
+      videoImage.setAttribute(
+        "src",
+        "https://www.popsci.com/uploads/2020/01/07/WMD5M52LJFBEBIHNEEABHVB6LA.jpg"
+      );
+      videoImage.onload = () => {
+        videoImage.style.maxWidth = "10vw"; // Reset to the default width
+      };
+    } else {
+      //   const alternativeResponse = await fetch('/video_feed', {
+      //     method: 'GET'
+      // });
+      videoImage.setAttribute("src", "http://localhost:8000/video_feed");
+      videoImage.onload = () => {
+        videoImage.style.maxWidth = ""; // Reset to the default width
+      };
     }
+  } catch (error) {
+    console.error("An error occurred:", error);
+    alert("An error occurred while processing.");
+  }
   // });
 };
 // exit handler function
@@ -389,12 +390,10 @@ const displayUsers = (users) => {
   });
   participants_str = participants_str.slice(0, participants_str.length - 8);
 
-  document.getElementsByClassName(
-    "main__participants_list"
-  )[0].innerHTML = participants_str;
-  document.getElementsByClassName(
-    "main__participants_list"
-  )[1].innerHTML = participants_str;
+  document.getElementsByClassName("main__participants_list")[0].innerHTML =
+    participants_str;
+  document.getElementsByClassName("main__participants_list")[1].innerHTML =
+    participants_str;
 };
 
 // Full screen video handler function
@@ -419,8 +418,8 @@ const videoClicked = (e) => {
 
 // full screen close handler function
 $("#videoModal").on("hide.bs.modal", function (e) {
-  const fullScreenVideoStream = document.getElementById("fullScreenVideo")
-    .srcObject.id;
+  const fullScreenVideoStream =
+    document.getElementById("fullScreenVideo").srcObject.id;
   document.getElementById("fullScreenVideo").pause();
   // document.getElementById("fullScreenVideo").muted = true;
   document.getElementById("fullScreenVideo").srcObject = null;
@@ -454,4 +453,3 @@ mainContent.on("click", function () {
 function offOverlay() {
   document.getElementById("overlay").style.display = "block";
 }
-

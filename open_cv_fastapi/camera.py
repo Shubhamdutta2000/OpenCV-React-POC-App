@@ -2,13 +2,6 @@ import cv2
 import time
 
 
-# face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-# eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
-
-
-# def gen_frames():
-#     cap.release()
-
 class VideoCamera(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
@@ -54,9 +47,8 @@ class VideoCamera(object):
 
                 # If no eyes or only one eye detected, display the original face ROI
                 if len(eyes) == 0 or len(eyes) == 1:
-                    ret, jpeg = cv2.imencode('.jpg', face_roi)
-                    return jpeg.tobytes()
                     # cv2.imshow('Video', face_roi)
+
                     prev_time = 0
                     current_time = time.time()
                     elapsed_time = current_time - prev_time
@@ -68,9 +60,13 @@ class VideoCamera(object):
                     # Print the bandwidth
                     print("Face_bandwidth:", bandwidth)
 
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
-                    continue
+                    # if cv2.waitKey(1) & 0xFF == ord('q'):
+                    #     break
+
+                    ret, jpeg = cv2.imencode('.jpg', face_roi)
+                    return jpeg.tobytes()
+
+                    # continue
 
                 # Extract the first two eye ROIs
                 eye1 = eyes[0]
@@ -88,8 +84,7 @@ class VideoCamera(object):
 
                 # Display the combined eye ROIs
                 # cv2.imshow('Video', eyes_roi)
-                ret, jpeg = cv2.imencode('.jpg', eyes_roi)
-                return jpeg.tobytes()
+
                 prev_time = 0
                 current_time = time.time()
                 elapsed_time = current_time - prev_time
@@ -100,8 +95,10 @@ class VideoCamera(object):
 
                 # Print the bandwidth
                 print("Extracted_Eyes_bandwidth:", bandwidth)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+                ret, jpeg = cv2.imencode('.jpg', eyes_roi)
+                return jpeg.tobytes()
+                # if cv2.waitKey(1) & 0xFF == ord('q'):
+                #     break
 
             time.sleep(1000)
         # ret, frame = self.video.read()
