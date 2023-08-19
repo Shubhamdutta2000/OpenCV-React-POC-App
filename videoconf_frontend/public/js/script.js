@@ -7,6 +7,7 @@ var tries = 0;
 var usersArr;
 var chatArr = [];
 
+// unregister user from the backend and also clear localstorage on tab close
 window.addEventListener("beforeunload", async (event) => {
   event.preventDefault();
   console.log("tab closed");
