@@ -7,11 +7,7 @@ const io = require("socket.io")(server);
 const { ExpressPeerServer } = require("peer");
 const shortid = require("shortid");
 
-const {
-  userJoin,
-  userLeave,
-  getRoomUsers,
-} = require("./utils/users");
+const { userJoin, userLeave, getRoomUsers } = require("./utils/users");
 
 // Creating peer server
 const peerServer = ExpressPeerServer(server, {

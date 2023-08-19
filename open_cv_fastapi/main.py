@@ -40,6 +40,14 @@ async def register_user(USERNAME: str):
     return {"message": "User registered successfully"}
 
 
+@app.delete("/unregister_user/{USERNAME}")
+async def unregister_user(USERNAME: str):
+    camera_index.pop(USERNAME)
+    camera_status.pop(USERNAME)
+    active_captures.pop(USERNAME)
+    return {"message": "User unregistered successfully"}
+
+
 def gen(camera):
     while True:
         frame = camera.get_frame()
