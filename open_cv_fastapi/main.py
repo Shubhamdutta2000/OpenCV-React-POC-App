@@ -34,9 +34,17 @@ async def register_user(USERNAME: str):
     
     if USERNAME not in camera_status:
         camera_status[USERNAME] = False
-        camera_index[USERNAME] = len(camera_status) - 1
         active_captures[USERNAME] = None
-        
+
+        # check if camera index is in proper sequence or not 
+        # and from 0 to len(camera_index) any number in sequence is missing 
+        # or not then add that index to that username in camera_index
+        for i in range(0, len(camera_index)):
+            if i not in camera_index.values():
+                camera_index[USERNAME] = i
+                return {"message": "User registered successfully"}
+
+        camera_index[USERNAME] = len(camera_status) - 1
     return {"message": "User registered successfully"}
 
 

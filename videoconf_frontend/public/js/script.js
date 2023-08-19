@@ -7,14 +7,14 @@ var tries = 0;
 var usersArr;
 var chatArr = [];
 
-// window.addEventListener("beforeunload", async (event) => {
-//   event.preventDefault();
-//   console.log("tab closed");
-//   localStorage.clear();
-//   await fetch(`http://127.0.0.1:8000/unregister_user/${USERNAME}`, {
-//     method: 'DELETE',
-//   });
-// });
+window.addEventListener("beforeunload", async (event) => {
+  event.preventDefault();
+  console.log("tab closed");
+  localStorage.clear();
+  await fetch(`http://127.0.0.1:8000/unregister_user/${USERNAME}`, {
+    method: "DELETE",
+  });
+});
 
 // Setting/checking localstorage form username
 if (localStorage.getItem("meetUserName")) {
