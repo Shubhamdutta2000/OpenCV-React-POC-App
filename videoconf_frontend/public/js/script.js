@@ -7,41 +7,39 @@ var tries = 0;
 var usersArr;
 var chatArr = [];
 
-window.addEventListener("beforeunload", async (event) => {
-  event.preventDefault();
-  console.log("tab closed");
-  localStorage.clear();
-  await fetch(`http://127.0.0.1:8000/unregister_user/${USERNAME}`, {
-    method: 'DELETE',
-  });
-});
+// window.addEventListener("beforeunload", async (event) => {
+//   event.preventDefault();
+//   console.log("tab closed");
+//   localStorage.clear();
+//   await fetch(`http://127.0.0.1:8000/unregister_user/${USERNAME}`, {
+//     method: 'DELETE',
+//   });
+// });
 
 // Setting/checking localstorage form username
 if (localStorage.getItem("meetUserName")) {
   USERNAME = localStorage.getItem("meetUserName");
-  // await fetch(`http://127.0.0.1:8000/register_user/${USERNAME}`, { method: 'POST' });
 
   const videoContainer = document.getElementById("video_feed");
-  const user_list = [];
-  fetch("http://127.0.0.1:8000/users", {
-    method: "GET",
-  })
-    .then((res) => res.json())
-    .then((d) => {
-      user_list = d;
+  (async () => {
+    let user_list = await fetch("http://127.0.0.1:8000/users", {
+      method: "GET",
+    }).then((res) => {
+      return res.json();
     });
-  user_list.forEach((each_user_name) => {
-    const videoImage = document.createElement("img");
-    videoImage.id = `videoImage-${USERNAME}`;
-    videoContainer.appendChild(videoImage);
-    videoImage.setAttribute(
-      "src",
-      `http://localhost:8000/video_feed/${each_user_name}`
-    );
-  });
-
-  socket.emit("addUserToList", USERNAME, ROOM_ID);
-  console.log("test");
+    user_list.forEach((each_user_name) => {
+      const videoImage = document.createElement("img");
+      videoImage.id = `videoImage-${USERNAME}`;
+      videoContainer.appendChild(videoImage);
+      videoImage.setAttribute(
+        "src",
+        `http://localhost:8000/video_feed/${each_user_name}`
+      );
+    });
+    // displayUsers();
+    socket.emit("addUserToList", USERNAME, ROOM_ID);
+    console.log("test");
+  })();
 } else {
   $("#usernameInputModal").modal(
     { keyboard: false, backdrop: "static" },
@@ -102,11 +100,11 @@ if (localStorage.getItem("meetUserName")) {
 }
 
 // Establishing peer
-const myPeer = new Peer(undefined, {
-  path: "/peerjs",
-  host: "/",
-  port: PORT,
-});
+// const myPeer = new Peer(undefined, {
+//   path: "/peerjs",
+//   host: "/",
+//   port: PORT,
+// });
 
 // Setting stream vars
 let myVideoStream;
@@ -178,14 +176,14 @@ socket.on("createMessage", (messageObj) => {
 });
 
 socket.on("roomUsers", (users) => {
-  // console.log(users);
+  console.log(users);
   displayUsers(users);
 });
 
 // User diconnected
-// socket.on("user-disconnected", (userId) => {
-//   if (peers[userId]) peers[userId].close();
-// });
+socket.on("user-disconnected", (userId) => {
+  if (peers[userId]) peers[userId].close();
+});
 
 // Opening peer
 // myPeer.on("open", (id) => {
@@ -193,18 +191,18 @@ socket.on("roomUsers", (users) => {
 // });
 
 // Connecting new user
-function connectToNewUser(userId, stream) {
-  const call = myPeer.call(userId, stream);
-  const video = document.createElement("video");
-  call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream);
-  });
-  call.on("close", () => {
-    video.remove();
-  });
+// function connectToNewUser(userId, stream) {
+// const call = myPeer.call(userId, stream);
+//   const video = document.createElement("video");
+//   call.on("stream", (userVideoStream) => {
+//     addVideoStream(video, userVideoStream);
+//   });
+//   call.on("close", () => {
+//     video.remove();
+//   });
 
-  peers[userId] = call;
-}
+// peers[userId] = call;
+// }
 
 // Adding new stream
 function addVideoStream(video, stream) {
@@ -309,7 +307,7 @@ const shareScreen = async () => {
     console.error("Error: " + err);
   }
   // connectToNewUser(myUserId, captureStream);
-  myPeer.call(myUserId, captureStream);
+  // myPeer.call(myUserId, captureStream);
   const video = document.createElement("video");
   addVideoStream(video, captureStream);
 };
