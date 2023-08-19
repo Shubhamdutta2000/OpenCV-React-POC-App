@@ -26,16 +26,16 @@ camera_index = {}
 # Maintain active video captures for each user
 active_captures = {}
 
-@app.post("/register_user/{user_id}")
-async def register_user(user_id: str):
+@app.post("/register_user/{USERNAME}")
+async def register_user(USERNAME: str):
     global camera_status
     global camera_index
     global active_captures
     
-    if user_id not in camera_status:
-        camera_status[user_id] = False
-        camera_index[user_id] = len(camera_status) - 1
-        active_captures[user_id] = None
+    if USERNAME not in camera_status:
+        camera_status[USERNAME] = False
+        camera_index[USERNAME] = len(camera_status) - 1
+        active_captures[USERNAME] = None
         
     return {"message": "User registered successfully"}
 
@@ -52,19 +52,25 @@ def read_root(request: Request):
         "message": "Hello User 🙏"
     }
 
-@app.get("/video_feed/{user_id}")
-async def video_feed(user_id: str):
+@app.get("/video_feed/{USERNAME}")
+async def video_feed(USERNAME: str):
     # get frame of specific video capture based on specific camera index and user_id
-    video_resource = VideoCamera(active_captures, camera_index, user_id)
+    video_resource = VideoCamera(active_captures, camera_index, USERNAME)
     return StreamingResponse(gen(video_resource),
                              media_type='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.delete("/stop/{user_id}")
-async def stop_video(user_id: str):
+@app.delete("/stop/{USERNAME}")
+async def stop_video(USERNAME: str):
     try:
         # release video capture of specific user id
-        video_resource.__del__(active_captures, user_id)
+        video_resource.__del__(active_captures, USERNAME)
         return {"message": "Video resource released"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/users")
+async def get_user_list():
+    print(camera_index)
+    return list(camera_index.keys())

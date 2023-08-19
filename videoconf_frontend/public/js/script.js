@@ -10,28 +10,70 @@ var chatArr = [];
 // Setting/checking localstorage form username
 if (localStorage.getItem("meetUserName")) {
   USERNAME = localStorage.getItem("meetUserName");
-
+  // await fetch(`http://127.0.0.1:8000/register_user/${USERNAME}`, { method: 'POST' });
+  
+  const videoContainer = document.getElementById('video_feed');
+  const user_list = []
+  fetch("http://127.0.0.1:8000/users", {
+    method: "GET"
+  }).then(res =>
+    res.json()).then(d => {
+      user_list = d
+    })
+  user_list.forEach(each_user_name => {
+    const videoImage = document.createElement('img');
+    videoImage.id = `videoImage-${USERNAME}`;
+    videoContainer.appendChild(videoImage);
+    videoImage.setAttribute("src", `http://localhost:8000/video_feed/${each_user_name}`);  
+  })
+  
   socket.emit("addUserToList", USERNAME, ROOM_ID);
-  // console.log("test");
+  console.log("test");
 } else {
   $("#usernameInputModal").modal(
     { keyboard: false, backdrop: "static" },
     "show"
   );
-  $("#usernameSubmitBtn").click(function () {
+  $("#usernameSubmitBtn").click(async function () {
     tries++;
+    
     if (tries > 3) {
       alert("Sorry you didn't enter your username properly...");
       window.location.href = "/exit";
       return;
+      
     }
     if (document.getElementById("usernameInput").value.length > 0) {
       USERNAME = document.getElementById("usernameInput").value;
+      console.log(USERNAME)
       USERNAME = USERNAME.trim().replace(/ +/g, "-");
+      await fetch(`http://127.0.0.1:8000/register_user/${USERNAME}`, { method: 'POST' });
 
+      const videoContainer = document.getElementById('video_feed');
+      const user_list = await fetch("http://127.0.0.1:8000/users", {
+        method: "GET"
+      }).then((res) => {
+        return res.json()
+      })
+      user_list_json = user_list
+      console.log(user_list_json);
+      
+      user_list_json.forEach(each_user_name => {
+        console.log(each_user_name);
+        const videoImage = document.createElement('img');
+        videoImage.id = `videoImage-${each_user_name}`;
+        videoContainer.appendChild(videoImage);
+        videoImage.setAttribute("src", `http://localhost:8000/video_feed/${each_user_name}`);  
+      })
+
+      // const videoImage = document.createElement('img');
+      // videoImage.id = `videoImage-${USERNAME}`;
+      // videoContainer.appendChild(videoImage);
+      // videoImage.setAttribute("src", `http://localhost:8000/video_feed/${USERNAME}`);
       localStorage.setItem(
         "meetUserName",
         document.getElementById("usernameInput").value
+        
       );
 
       $("#usernameInputModal").modal("hide");
@@ -61,27 +103,27 @@ const peers = {};
 var colors = ["#0078ff", "#bd00ff", "#ff9a00", "#00811f", "#e70000"];
 
 // Streaming my own audio/video
-navigator.mediaDevices
-  .getUserMedia({
-    video: true,
-    audio: true,
-  })
-  .then((stream) => {
-    myVideoStream = stream;
-    addVideoStream(myVideo, stream);
-    myPeer.on("call", (call) => {
-      call.answer(stream);
-      const video = document.createElement("video");
-      call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
-      });
-    });
+// navigator.mediaDevices
+  // .getUserMedia({
+  //   video: true,
+  //   audio: true,
+  // })
+  // .then((stream) => {
+  //   myVideoStream = stream;
+  //   addVideoStream(myVideo, stream);
+  //   myPeer.on("call", (call) => {
+  //     call.answer(stream);
+  //     const video = document.createElement("video");
+  //     call.on("stream", (userVideoStream) => {
+  //       addVideoStream(video, userVideoStream);
+  //     });
+  //   });
 
     // User connected
-    socket.on("user-connected", (userId) => {
-      myUserId = userId;
-      connectToNewUser(userId, stream);
-    });
+    // socket.on("user-connected", (userId) => {
+    //   myUserId = userId;
+    //   connectToNewUser(userId, stream);
+    // });
 
     // Chat message
 
@@ -121,7 +163,7 @@ navigator.mediaDevices
         );
       });
     });
-  });
+
 
 socket.on("roomUsers", (users) => {
   // console.log(users);
@@ -129,14 +171,14 @@ socket.on("roomUsers", (users) => {
 });
 
 // User diconnected
-socket.on("user-disconnected", (userId) => {
-  if (peers[userId]) peers[userId].close();
-});
+// socket.on("user-disconnected", (userId) => {
+//   if (peers[userId]) peers[userId].close();
+// });
 
 // Opening peer
-myPeer.on("open", (id) => {
-  socket.emit("join-room", ROOM_ID, id);
-});
+// myPeer.on("open", (id) => {
+//   socket.emit("join-room", ROOM_ID, id);
+// });
 
 // Connecting new user
 function connectToNewUser(userId, stream) {
@@ -187,12 +229,12 @@ const muteUnmute = () => {
 // play/stop function
 const playStop = async () => {
   const releaseButton = document.getElementById("stop_vid");
-  const videoImage = document.getElementById("videoImage");
+  const videoImage = document.getElementById( `videoImage-${USERNAME}`);
 
   // releaseButton.addEventListener("click", async () => {
   try {
-    if (videoImage.getAttribute("src") === "http://localhost:8000/video_feed") {
-      const response = await fetch("http://localhost:8000/stop", {
+    if (videoImage.getAttribute("src") === `http://localhost:8000/video_feed/${USERNAME}`) {
+      const response = await fetch(`http://localhost:8000/stop/${USERNAME}`, {
         method: "DELETE",
       });
 
@@ -212,7 +254,7 @@ const playStop = async () => {
       //   const alternativeResponse = await fetch('/video_feed', {
       //     method: 'GET'
       // });
-      videoImage.setAttribute("src", "http://localhost:8000/video_feed");
+      videoImage.setAttribute("src", `http://localhost:8000/video_feed/${USERNAME}`);
       videoImage.onload = () => {
         videoImage.style.maxWidth = ""; // Reset to the default width
       };
