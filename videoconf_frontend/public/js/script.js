@@ -35,9 +35,12 @@ async function fetchUserListAndRenderImage() {
 
   user_list.forEach((each_user_name) => {
     console.log(each_user_name, "each_user_name");
+
     const videoImage = document.createElement("img");
     videoImage.id = `videoImage-${USERNAME}`;
     videoContainer.appendChild(videoImage);
+    videoContainer.style.display = "flex";
+    videoContainer.style.flexDirection = "column";
     videoImage.setAttribute(
       "src",
       `http://localhost:8000/video_feed/${each_user_name}`

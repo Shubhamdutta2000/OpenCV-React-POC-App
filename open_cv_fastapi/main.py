@@ -72,13 +72,20 @@ def read_root(request: Request):
 async def video_feed(USERNAME: str):
     # get frame of specific video capture based on specific camera index and user_id
     video_resource = VideoCamera(active_captures, camera_index, USERNAME)
+    camera_status[USERNAME] = True
     return StreamingResponse(gen(video_resource),
                              media_type='multipart/x-mixed-replace; boundary=frame')
+
+@app.get("/camera_status/{USERNAME}")
+async def camera_status(USERNAME):
+    # get username camera status
+    return camera_status[USERNAME]
 
 
 @app.delete("/stop/{USERNAME}")
 async def stop_video(USERNAME: str):
     try:
+        camera_status[USERNAME] = False
         # release video capture of specific user id
         video_resource.__del__(active_captures, USERNAME)
         return {"message": "Video resource released"}
