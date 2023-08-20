@@ -26,11 +26,14 @@ camera_index = {}
 # Maintain active video captures for each user
 active_captures = {}
 
+video_resource = VideoCamera(active_captures, camera_index)
+
 @app.post("/register_user/{USERNAME}")
 async def register_user(USERNAME: str):
     global camera_status
     global camera_index
     global active_captures
+    print(camera_status)
     
     if USERNAME not in camera_status:
         camera_status[USERNAME] = False
@@ -77,7 +80,7 @@ async def video_feed(USERNAME: str):
                              media_type='multipart/x-mixed-replace; boundary=frame')
 
 @app.get("/camera_status/{USERNAME}")
-async def camera_status(USERNAME):
+async def camera_stat_route(USERNAME):
     # get username camera status
     return camera_status[USERNAME]
 
@@ -87,7 +90,7 @@ async def stop_video(USERNAME: str):
     try:
         camera_status[USERNAME] = False
         # release video capture of specific user id
-        video_resource.__del__(active_captures, USERNAME)
+        video_resource.del_video(active_captures, USERNAME)
         return {"message": "Video resource released"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

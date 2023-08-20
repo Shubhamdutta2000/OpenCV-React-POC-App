@@ -1,6 +1,7 @@
 // Setting config and global vars
 const socket = io("/");
 
+
 const videoGrid = document.getElementById("video-grid");
 var myUserId = "";
 var USERNAME = "";
@@ -20,6 +21,7 @@ window.addEventListener("beforeunload", async (event) => {
 
 async function fetchUserListAndRenderImage() {
   USERNAME = localStorage.getItem("meetUserName");
+  console.log(USERNAME, "USER");
   const videoContainer = document.getElementById("video_feed");
 
   let user_list = await fetch("http://127.0.0.1:8000/users", {
@@ -33,21 +35,40 @@ async function fetchUserListAndRenderImage() {
     videoContainer.removeChild(videoContainer.firstChild);
   }
 
-  user_list.forEach((each_user_name) => {
+  user_list.forEach(async (each_user_name) => {
+    let camera_status_user = await fetch(
+      `http://127.0.0.1:8000/camera_status/${each_user_name}`,
+      {
+        method: "GET",
+      }
+    ).then((res) => {
+      return res.json();
+    });
     console.log(each_user_name, "each_user_name");
+    console.log(camera_status_user, "camera_status_user");
 
     const videoImage = document.createElement("img");
-    videoImage.id = `videoImage-${USERNAME}`;
+    videoImage.id = `videoImage-${each_user_name}`;
     videoContainer.appendChild(videoImage);
     videoContainer.style.display = "flex";
     videoContainer.style.flexDirection = "column";
-    videoImage.setAttribute(
-      "src",
-      `http://localhost:8000/video_feed/${each_user_name}`
-    );
+
+    if (camera_status_user) {
+      videoImage.setAttribute(
+        "src",
+        `http://localhost:8000/video_feed/${each_user_name}`
+      );
+    } else {
+      videoImage.setAttribute(
+        "src",
+        "https://www.popsci.com/uploads/2020/01/07/WMD5M52LJFBEBIHNEEABHVB6LA.jpg"
+      );
+      videoImage.onload = () => {
+        videoImage.style.maxWidth = "10vw"; // Reset to the default width
+      };
+    }
   });
 }
-
 // Poll every 5 seconds
 const pollingInterval = 5000; // 5 seconds in milliseconds
 const pollingIntervalId = setInterval(
@@ -279,6 +300,11 @@ const muteUnmute = () => {
 const playStop = async () => {
   const releaseButton = document.getElementById("stop_vid");
   const videoImage = document.getElementById(`videoImage-${USERNAME}`);
+  USERNAME = localStorage.getItem("meetUserName");
+  console.log(USERNAME);
+  console.log(videoImage.getAttribute("src"), "src");
+  console.log(videoImage.getAttribute("src") ===
+  `http://localhost:8000/video_feed/${USERNAME}`, "check src");
 
   // releaseButton.addEventListener("click", async () => {
   try {
@@ -289,6 +315,7 @@ const playStop = async () => {
       const response = await fetch(`http://localhost:8000/stop/${USERNAME}`, {
         method: "DELETE",
       });
+      console.log("HRALLNBKB");
 
       if (response.ok) {
         const data = await response.json();
@@ -313,6 +340,11 @@ const playStop = async () => {
       // videoImage.onload = () => {
       //   videoImage.style.maxWidth = ""; // Reset to the default width
       // };
+      const videoContainer = document.getElementById("video_feed");
+      // Remove all child elements
+      while (videoContainer.firstChild) {
+        videoContainer.removeChild(videoContainer.firstChild);
+      }
 
       (async () => {
         let user_list = await fetch("http://127.0.0.1:8000/users", {
@@ -320,14 +352,40 @@ const playStop = async () => {
         }).then((res) => {
           return res.json();
         });
-        user_list.forEach((each_user_name) => {
+
+        user_list.forEach(async (each_user_name) => {
+          let camera_status_user = await fetch(
+            `http://127.0.0.1:8000/camera_status/${each_user_name}`,
+            {
+              method: "GET",
+            }
+          ).then((res) => {
+            return res.json();
+          });
+          console.log(each_user_name, "each_user_name");
+          console.log(camera_status_user);
+
           const videoImage = document.createElement("img");
           videoImage.id = `videoImage-${USERNAME}`;
           videoContainer.appendChild(videoImage);
-          videoImage.setAttribute(
-            "src",
-            `http://localhost:8000/video_feed/${each_user_name}`
-          );
+          videoContainer.style.display = "flex";
+          videoContainer.style.flexDirection = "column";
+          console.log(camera_status_user);
+
+          if (!camera_status_user) {
+            videoImage.setAttribute(
+              "src",
+              `http://localhost:8000/video_feed/${each_user_name}`
+            );
+          } else {
+            videoImage.setAttribute(
+              "src",
+              "https://www.popsci.com/uploads/2020/01/07/WMD5M52LJFBEBIHNEEABHVB6LA.jpg"
+            );
+            videoImage.onload = () => {
+              videoImage.style.maxWidth = "10vw"; // Reset to the default width
+            };
+          }
         });
         // displayUsers();
         // socket.emit("addUserToList", USERNAME, ROOM_ID);

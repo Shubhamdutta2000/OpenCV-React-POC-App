@@ -3,21 +3,23 @@ import time
 
 
 class VideoCamera(object):
-    def __init__(self, active_captures, camera_index, user_id):
+    def __init__(self, active_captures, camera_index, user_id=None):
         # Check if any active video capture present or not otherwise create a video capture 
         # based on the corresponding camera index and user_id
-        if active_captures[user_id] is None:
-            self.video = cv2.VideoCapture(camera_index[user_id])
-            active_captures[user_id] = self.video
-        else:
-            self.video = active_captures[user_id]
+        print("active_captures", active_captures)
+        if user_id is not None:
+            if active_captures.get(user_id) is None:
+                self.video = cv2.VideoCapture(camera_index[user_id])
+                active_captures[user_id] = self.video
+            else:
+                self.video = active_captures[user_id]
 
         self.face_cascade = cv2.CascadeClassifier(
             cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.eye_cascade = cv2.CascadeClassifier(
             cv2.data.haarcascades + 'haarcascade_eye.xml')
 
-    def __del__(self, active_captures, user_id):
+    def del_video(self, active_captures, user_id):
          # release active video capure of specific user id 
          self.video = active_captures.pop(user_id, None)
          if self.video:
