@@ -25,3 +25,4 @@ yarn-error.log*
 # fastapi app
 /open_cv_fastapi/venv
 /open_cv_fastapi/__pycache__
+/venv
