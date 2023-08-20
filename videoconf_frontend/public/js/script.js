@@ -1,7 +1,6 @@
 // Setting config and global vars
 const socket = io("/");
 
-
 const videoGrid = document.getElementById("video-grid");
 var myUserId = "";
 var USERNAME = "";
@@ -303,8 +302,11 @@ const playStop = async () => {
   USERNAME = localStorage.getItem("meetUserName");
   console.log(USERNAME);
   console.log(videoImage.getAttribute("src"), "src");
-  console.log(videoImage.getAttribute("src") ===
-  `http://localhost:8000/video_feed/${USERNAME}`, "check src");
+  console.log(
+    videoImage.getAttribute("src") ===
+      `http://localhost:8000/video_feed/${USERNAME}`,
+    "check src"
+  );
 
   // releaseButton.addEventListener("click", async () => {
   try {
@@ -399,8 +401,16 @@ const playStop = async () => {
   // });
 };
 // exit handler function
-const exit = () => {
-  window.location.href = "/exit";
+const exit = async () => {
+  await fetch(`http://127.0.0.1:8000/unregister_user/${USERNAME}`, {
+    method: "DELETE",
+  })
+    .then(() => {
+      window.location.href = "/exit";
+    })
+    .catch(() => {
+      alert("Something went wrong");
+    });
 };
 
 // copy handler function
