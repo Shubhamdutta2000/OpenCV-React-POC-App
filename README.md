@@ -9,12 +9,22 @@
 - Create Instant meet: Users can create instant meet and multiple user in a same local server can join the meet.
 - Image processing: The uploaded images can be processed using OpenCV image processing techniques like face and eye detection.
 - Real-time preview: Users can see the preview of the processed image on the frontend.
-  Prerequisites
+- Start the meeting using the button provided.
+- The meeting can be run locally only.
+- Use two webcameras one in chrome and the other one in incognito.
+- The same URL must be opened in the incognito window.
+- The video feed will get displayed along with the processing of the video.(the openCV code for eye detection)
+- The video feed can be turned on/off.
+  
+##  Prerequisites
+
 - Before you begin, ensure you have met the following requirements:
 
   - Install Python 3.x and Node.js on your system.
   - Install the required Python packages by running pip install -r requirements.txt.
   - Install the required Node.js packages by running npm install in the frontend directory.
+
+
 
 ## Getting Started
 
@@ -53,13 +63,6 @@ npm start
 ```
 
 The frontend will be accessible at http://localhost:5000.
-
-## Usage
-
-- Open your web browser and go to http://localhost:5000.
-- Upload an image using the provided upload button.
-- Choose an image processing technique from the options provided (e.g., grayscale, blur, edge detection, etc.).
-- Click the "Apply" button to see the processed image preview.
 
 ## Contributing
 
