@@ -50,9 +50,9 @@ async def register_user(USERNAME: str):
 
 @app.delete("/unregister_user/{USERNAME}")
 async def unregister_user(USERNAME: str):
-    camera_index.pop(USERNAME)
-    camera_status.pop(USERNAME)
-    active_captures.pop(USERNAME)
+    camera_index.pop(USERNAME, "Username does not exist")
+    camera_status.pop(USERNAME, "Username does not exist")
+    active_captures.pop(USERNAME, "Username does not exist")
     return {"message": "User unregistered successfully"}
 
 
@@ -90,3 +90,12 @@ async def stop_video(USERNAME: str):
 async def get_user_list():
     print(camera_index)
     return list(camera_index.keys())
+
+
+
+# @app.websocket("/ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await websocket.accept()
+#     while True:
+#         # data = await websocket.receive_text()
+#         await websocket.send_text(camera_index.keys())

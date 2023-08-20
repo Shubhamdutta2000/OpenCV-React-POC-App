@@ -1,5 +1,6 @@
 // Setting config and global vars
 const socket = io("/");
+
 const videoGrid = document.getElementById("video-grid");
 var myUserId = "";
 var USERNAME = "";
@@ -16,6 +17,40 @@ window.addEventListener("beforeunload", async (event) => {
     method: "DELETE",
   });
 });
+
+async function fetchUserListAndRenderImage() {
+  USERNAME = localStorage.getItem("meetUserName");
+  const videoContainer = document.getElementById("video_feed");
+
+  let user_list = await fetch("http://127.0.0.1:8000/users", {
+    method: "GET",
+  }).then((res) => {
+    return res.json();
+  });
+
+  // Remove all child elements
+  while (videoContainer.firstChild) {
+    videoContainer.removeChild(videoContainer.firstChild);
+  }
+
+  user_list.forEach((each_user_name) => {
+    console.log(each_user_name, "each_user_name");
+    const videoImage = document.createElement("img");
+    videoImage.id = `videoImage-${USERNAME}`;
+    videoContainer.appendChild(videoImage);
+    videoImage.setAttribute(
+      "src",
+      `http://localhost:8000/video_feed/${each_user_name}`
+    );
+  });
+}
+
+// Poll every 5 seconds
+const pollingInterval = 5000; // 5 seconds in milliseconds
+const pollingIntervalId = setInterval(
+  fetchUserListAndRenderImage,
+  pollingInterval
+);
 
 // Setting/checking localstorage form username
 if (localStorage.getItem("meetUserName")) {
@@ -38,8 +73,8 @@ if (localStorage.getItem("meetUserName")) {
       );
     });
     // displayUsers();
-    socket.emit("addUserToList", USERNAME, ROOM_ID);
-    console.log("test");
+    // socket.emit("addUserToList", USERNAME, ROOM_ID);
+    // console.log("test");
   })();
 } else {
   $("#usernameInputModal").modal(
@@ -268,13 +303,33 @@ const playStop = async () => {
       //   const alternativeResponse = await fetch('/video_feed', {
       //     method: 'GET'
       // });
-      videoImage.setAttribute(
-        "src",
-        `http://localhost:8000/video_feed/${USERNAME}`
-      );
-      videoImage.onload = () => {
-        videoImage.style.maxWidth = ""; // Reset to the default width
-      };
+      // videoImage.setAttribute(
+      //   "src",
+      //   `http://localhost:8000/video_feed/${USERNAME}`
+      // );
+      // videoImage.onload = () => {
+      //   videoImage.style.maxWidth = ""; // Reset to the default width
+      // };
+
+      (async () => {
+        let user_list = await fetch("http://127.0.0.1:8000/users", {
+          method: "GET",
+        }).then((res) => {
+          return res.json();
+        });
+        user_list.forEach((each_user_name) => {
+          const videoImage = document.createElement("img");
+          videoImage.id = `videoImage-${USERNAME}`;
+          videoContainer.appendChild(videoImage);
+          videoImage.setAttribute(
+            "src",
+            `http://localhost:8000/video_feed/${each_user_name}`
+          );
+        });
+        // displayUsers();
+        // socket.emit("addUserToList", USERNAME, ROOM_ID);
+        console.log("test");
+      })();
     }
   } catch (error) {
     console.error("An error occurred:", error);

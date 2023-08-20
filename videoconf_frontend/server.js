@@ -6,6 +6,7 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const { ExpressPeerServer } = require("peer");
 const shortid = require("shortid");
+const cors = require("cors");
 
 const { userJoin, userLeave, getRoomUsers } = require("./utils/users");
 
@@ -16,6 +17,8 @@ const peerServer = ExpressPeerServer(server, {
 
 // Middlewares
 app.use("/peerjs", peerServer);
+
+app.use(cors());
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "/public")));
