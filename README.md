@@ -52,33 +52,14 @@ npm i
 npm start
 ```
 
-The frontend will be accessible at http://localhost:3000.
+The frontend will be accessible at http://localhost:5000.
 
 ## Usage
 
-- Open your web browser and go to http://localhost:3000.
+- Open your web browser and go to http://localhost:5000.
 - Upload an image using the provided upload button.
 - Choose an image processing technique from the options provided (e.g., grayscale, blur, edge detection, etc.).
 - Click the "Apply" button to see the processed image preview.
-
-## Project Structure
-
-opencv-fastapi-nodeejs/
-├── backend/
-│ ├── main.py
-│ └── image_processing.py
-├── frontend/
-│ ├── public/
-│ ├── views/
-│ ├── routes.js
-│ └── server.js
-├── static/
-│ ├── images/
-│ └── processed_images/
-├── templates/
-│ └── index.ejs
-├── requirements.txt
-└── README.md
 
 ## Contributing
 
