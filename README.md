@@ -15,6 +15,7 @@
 - The same URL must be opened in the incognito window.
 - The video feed will get displayed along with the processing of the video.(the openCV code for eye detection)
 - The video feed can be turned on/off.
+- User can leave from a specific meeting 
   
 ##  Prerequisites
 
