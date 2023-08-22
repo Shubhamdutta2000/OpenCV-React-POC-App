@@ -45,6 +45,9 @@ python -m venv venv
 
 # to activate virtual env (required every time)
 source venv/Scripts/activate
+
+# install all dependencies for the opencv backend project
+pip install -r requirements.txt
 ```
 
 - Start the FastAPI backend:
