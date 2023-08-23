@@ -26,9 +26,9 @@ class VideoCamera(object):
             self.video.release()
 
     def get_frame(self):
-        last_eye_detection_time = time.time()
-        current_time = time.time()
-        prev_time = current_time
+        last_eye_detection_time = 0
+        # current_time = time.time()
+        prev_time = 0
         while True:
             ret, frame = self.video.read()
             if not ret:
