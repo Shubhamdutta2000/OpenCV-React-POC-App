@@ -4,7 +4,7 @@ import time
 
 class VideoCamera(object):
     def __init__(self, active_captures, camera_index, user_id=None):
-        # Check if any active video capture present or not otherwise create a video capture 
+        # Check if any active video capture present or not otherwise create a video capture
         # based on the corresponding camera index and user_id
         print("active_captures", active_captures)
         if user_id is not None:
@@ -20,9 +20,9 @@ class VideoCamera(object):
             cv2.data.haarcascades + 'haarcascade_eye.xml')
 
     def del_video(self, active_captures, user_id):
-         # release active video capure of specific user id 
-         self.video = active_captures.pop(user_id, None)
-         if self.video:
+        # release active video capure of specific user id
+        self.video = active_captures.pop(user_id, None)
+        if self.video:
             self.video.release()
 
     def get_frame(self):
@@ -37,9 +37,10 @@ class VideoCamera(object):
             # Convert to grayscale
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             current_time = time.time()
-            # Detect faces in the grayscale frame
             
-            faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(70, 70))
+            # Detect faces in the grayscale frame
+            faces = self.face_cascade.detectMultiScale(
+                gray, scaleFactor=1.1, minNeighbors=5, minSize=(70, 70))
 
             eyes_detected = False
 
@@ -48,7 +49,8 @@ class VideoCamera(object):
                 face_roi = gray[y:y+h, x:x+w]
 
                 # Detect eyes in the grayscale face ROI
-                eyes = self.eye_cascade.detectMultiScale(face_roi, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                eyes = self.eye_cascade.detectMultiScale(
+                    face_roi, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
                 # Extract both eyes together
                 if len(eyes) == 2:
@@ -62,17 +64,18 @@ class VideoCamera(object):
                     eye_w = max(ex1 + ew1, ex2 + ew2) - eye_x
                     eye_h = max(ey1 + eh1, ey2 + eh2) - eye_y
 
-                    extracted_eyes = face_roi[eye_y:eye_y+eye_h, eye_x:eye_x+eye_w]
+                    extracted_eyes = face_roi[eye_y:eye_y +
+                                              eye_h, eye_x:eye_x+eye_w]
 
                     # Update the last time eyes were detected
                     last_eye_detection_time = time.time()
-                    print(last_eye_detection_time,"last_eye_detection")
-                    
+                    print(last_eye_detection_time, "last_eye_detection")
+
                     eyes_detected = True
 
             # If eyes were not detected for 10 seconds, display the complete video
             if not eyes_detected and (time.time() - last_eye_detection_time > 10):
-        
+
                 # Calculate bandwidth for the entire frame
                 current_time = time.time()
                 elapsed_time = current_time - prev_time
@@ -87,18 +90,19 @@ class VideoCamera(object):
                 current_time = time.time()
                 elapsed_time = current_time - prev_time
                 eye_bandwidth = len(extracted_eyes.tobytes()) / elapsed_time
-                print("Extracted_Eyes_bandwidth:", eye_bandwidth, "bytes/second")
+                print("Extracted_Eyes_bandwidth:",
+                      eye_bandwidth, "bytes/second")
 
                 ret, jpeg = cv2.imencode('.jpg', extracted_eyes)
                 return jpeg.tobytes()
 
             prev_time = current_time
-                        # Print the bandwidth
-                        # print("Extracted_Eyes_bandwidth:", bandwidth)
-                        # ret, jpeg = cv2.imencode('.jpg', eyes_roi)
-                        # return jpeg.tobytes()
-                        # if cv2.waitKey(1) & 0xFF == ord('q'):
-                        #     break
+            # Print the bandwidth
+            # print("Extracted_Eyes_bandwidth:", bandwidth)
+            # ret, jpeg = cv2.imencode('.jpg', eyes_roi)
+            # return jpeg.tobytes()
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
         # ret, frame = self.video.read()
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
