@@ -155,7 +155,7 @@ watchgod==0.7
 webdriver-manager==3.5.2
 WebSearch==0.0.0
 websockets==10.1
-Werkzeug==2.3.7
+Werkzeug==3.0.1
 wsproto==1.0.0
 zipp==3.16.2
 zope.interface==5.4.0
