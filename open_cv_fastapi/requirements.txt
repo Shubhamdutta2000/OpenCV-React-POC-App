@@ -116,7 +116,7 @@ sacremoses==0.0.46
 scikit-learn==1.0.1
 scipy==1.7.2
 scrape-search-engine==0.2.2
-Scrapy==2.5.0
+Scrapy==2.11.0
 scrapyrt==0.12.0
 selenium==3.141.0
 selenium-wire==4.5.5
